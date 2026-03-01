@@ -1,0 +1,71 @@
+/* ─── Light mode (default) ────────────────────────────────────── */
+
+:root {
+  /* Surfaces */
+  --color-bg:             oklch(0.98 0 0);
+  --color-surface:        oklch(1 0 0);
+  --color-surface-raised: oklch(0.96 0 0);
+
+  /* Borders & text */
+  --color-border:         oklch(0.88 0 0);
+  --color-text:           oklch(0.15 0 0);
+  --color-text-muted:     oklch(0.50 0 0);
+
+  /* Primary — vivid red */
+  --color-primary:            oklch(0.55 0.22 27);
+  --color-primary-hover:      oklch(0.48 0.22 27);
+  --color-primary-foreground: oklch(1 0 0);
+
+  /* Kanban column status */
+  --color-todo:          oklch(0.20 0 0);
+  --color-todo-fg:       oklch(1 0 0);
+  --color-inprogress:    oklch(0.72 0.18 55);
+  --color-inprogress-fg: oklch(1 0 0);
+  --color-done:          oklch(0.65 0.18 145);
+  --color-done-fg:       oklch(1 0 0);
+
+  /* Priority indicators */
+  --color-priority-low:    oklch(0.65 0.14 145);
+  --color-priority-medium: oklch(0.72 0.18 55);
+  --color-priority-high:   oklch(0.55 0.22 27);
+
+  /* Destructive */
+  --color-destructive:            oklch(0.55 0.22 27);
+  --color-destructive-foreground: oklch(1 0 0);
+}
+
+/* ─── Dark mode ───────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  /* Surfaces */
+  --color-bg:             oklch(0.10 0 0);
+  --color-surface:        oklch(0.14 0 0);
+  --color-surface-raised: oklch(0.18 0 0);
+
+  /* Borders & text */
+  --color-border:         oklch(0.28 0 0);
+  --color-text:           oklch(0.95 0 0);
+  --color-text-muted:     oklch(0.60 0 0);
+
+  /* Primary — same vivid red */
+  --color-primary:            oklch(0.55 0.22 27);
+  --color-primary-hover:      oklch(0.48 0.22 27);
+  --color-primary-foreground: oklch(1 0 0);
+
+  /* Kanban column status — unchanged */
+  --color-todo:          oklch(0.20 0 0);
+  --color-todo-fg:       oklch(1 0 0);
+  --color-inprogress:    oklch(0.72 0.18 55);
+  --color-inprogress-fg: oklch(1 0 0);
+  --color-done:          oklch(0.65 0.18 145);
+  --color-done-fg:       oklch(1 0 0);
+
+  /* Priority indicators — unchanged */
+  --color-priority-low:    oklch(0.65 0.14 145);
+  --color-priority-medium: oklch(0.72 0.18 55);
+  --color-priority-high:   oklch(0.55 0.22 27);
+
+  /* Destructive — unchanged */
+  --color-destructive:            oklch(0.55 0.22 27);
+  --color-destructive-foreground: oklch(1 0 0);
+}
