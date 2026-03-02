@@ -1,20 +1,20 @@
-import { Link } from '@tanstack/react-router'
-import { Moon, Sun } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
-import { useTheme } from '@/hooks/use-theme'
+import { Link } from "@tanstack/react-router";
+import { Moon, Sun } from "lucide-react";
+import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/hooks/use-theme";
 
 export function Navbar() {
-  const theme = useTheme()
+  const theme = useTheme();
 
   const isDark =
-    theme.theme === 'dark' ||
-    (theme.theme === 'system' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches)
+    theme.theme === "dark" ||
+    (theme.theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const toggleTheme = () => {
-    theme.setTheme(isDark ? 'light' : 'dark')
-  }
+    theme.setTheme(isDark ? "light" : "dark");
+  };
 
   return (
     <motion.nav
@@ -46,5 +46,5 @@ export function Navbar() {
         </Button>
       </div>
     </motion.nav>
-  )
+  );
 }
