@@ -1,40 +1,43 @@
-import { useNavigate } from '@tanstack/react-router'
-import { motion } from 'motion/react'
-import { Plus, Trash2 } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useBoardStore } from '@/store/use-board-store'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useNavigate } from "@tanstack/react-router";
+import { motion } from "motion/react";
+import { Plus, Trash2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useBoardStore } from "@/store/use-board-store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const createBoardSchema = z.object({
-  name: z.string().min(1, 'Board name is required').min(3, 'Must be at least 3 characters'),
-})
+  name: z
+    .string()
+    .min(1, "Board name is required")
+    .min(3, "Must be at least 3 characters"),
+});
 
-type CreateBoardInput = z.infer<typeof createBoardSchema>
+type CreateBoardInput = z.infer<typeof createBoardSchema>;
 
 const HomePage = () => {
-  const navigate = useNavigate()
-  const store = useBoardStore()
+  const navigate = useNavigate();
+  const store = useBoardStore();
   const form = useForm<CreateBoardInput>({
     resolver: zodResolver(createBoardSchema),
-  })
+  });
 
   const handleSubmit = (data: CreateBoardInput) => {
-    store.addBoard(data.name)
-    form.reset()
-  }
+    store.addBoard(data.name);
+    form.reset();
+  };
 
   const handleBoardClick = (boardId: string) => {
-    navigate({ to: '/board/$boardId', params: { boardId } })
-  }
+    navigate({ to: "/board/$boardId", params: { boardId } });
+  };
 
   const handleDelete = (boardId: string, event: React.MouseEvent) => {
-    event.stopPropagation()
-    store.deleteBoard(boardId)
-  }
+    event.stopPropagation();
+    store.deleteBoard(boardId);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -45,7 +48,7 @@ const HomePage = () => {
         delayChildren: 0.2,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -54,7 +57,7 @@ const HomePage = () => {
       y: 0,
       transition: { duration: 0.4 },
     },
-  }
+  };
 
   return (
     <div className="min-h-dvh bg-background pt-8 pb-16 px-4">
@@ -66,7 +69,9 @@ const HomePage = () => {
           className="mb-12"
         >
           <h1 className="text-4xl font-bold text-text mb-2">Your Boards</h1>
-          <p className="text-text-secondary">Create and manage your projects with ease</p>
+          <p className="text-text-secondary">
+            Create and manage your projects with ease
+          </p>
         </motion.div>
 
         <motion.div
@@ -75,9 +80,15 @@ const HomePage = () => {
           transition={{ duration: 0.4, delay: 0.1 }}
           className="mb-12 p-6 rounded-2xl border border-border bg-surface hover:border-primary transition-colors"
         >
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="flex flex-col gap-4"
+          >
             <div>
-              <Label htmlFor="board-name" className="block text-sm font-medium text-text mb-2">
+              <Label
+                htmlFor="board-name"
+                className="block text-sm font-medium text-text mb-2"
+              >
                 Create New Board
               </Label>
               <div className="flex flex-col sm:flex-row gap-2">
@@ -85,7 +96,7 @@ const HomePage = () => {
                   id="board-name"
                   type="text"
                   placeholder="Enter board name..."
-                  {...form.register('name')}
+                  {...form.register("name")}
                   className="flex-1"
                 />
                 <Button type="submit" className="gap-2 sm:w-auto">
@@ -94,7 +105,9 @@ const HomePage = () => {
                 </Button>
               </div>
               {form.formState.errors.name && (
-                <p className="text-destructive text-sm mt-1">{form.formState.errors.name.message}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {form.formState.errors.name.message}
+                </p>
               )}
             </div>
           </form>
@@ -110,7 +123,9 @@ const HomePage = () => {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
               <Plus size={32} className="text-primary" />
             </div>
-            <p className="text-text-secondary text-lg">No boards yet. Create one to get started!</p>
+            <p className="text-text-secondary text-lg">
+              No boards yet. Create one to get started!
+            </p>
           </motion.div>
         ) : (
           <motion.div
@@ -163,7 +178,7 @@ const HomePage = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
