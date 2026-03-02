@@ -37,11 +37,24 @@ const buttonVariants = cva(
   },
 );
 
-function Button(
-  props: React.ComponentProps<"button"> &
-    VariantProps<typeof buttonVariants> & { asChild?: boolean },
-) {
-  const { className, variant, size, asChild, ...rest } = props;
+interface ButtonProps
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  prefixIcon?: React.ReactNode;
+  suffixIcon?: React.ReactNode;
+}
+
+function Button(props: ButtonProps) {
+  const {
+    className,
+    variant,
+    size,
+    asChild,
+    prefixIcon,
+    suffixIcon,
+    children,
+    ...rest
+  } = props;
   const Comp = asChild ? Slot.Root : "button";
 
   return (
@@ -51,8 +64,13 @@ function Button(
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
       {...rest}
-    />
+    >
+      {prefixIcon && <span>{prefixIcon}</span>}
+      {children}
+      {suffixIcon && <span>{suffixIcon}</span>}
+    </Comp>
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants };
