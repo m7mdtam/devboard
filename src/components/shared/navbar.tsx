@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Moon, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/shared/logo";
 import { useTheme } from "@/hooks/use-theme";
 
 export function Navbar() {
@@ -24,8 +25,8 @@ export function Navbar() {
       className="fixed top-0 left-0 right-0 w-full h-16 bg-surface border-b border-border backdrop-blur-sm z-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex flex-row items-center justify-between">
-        <Link to="/" className="flex flex-row items-center gap-2">
-          <div className="bg-linear-to-br from-primary to-secondary rounded-md w-6 h-6" />
+        <Link to="/" className="flex flex-row items-center gap-3">
+          <Logo size={28} />
           <span className="font-display font-bold text-text text-lg hidden sm:inline">
             DevBoard
           </span>
