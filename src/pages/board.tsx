@@ -1,85 +1,93 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from '@tanstack/react-router'
-import { motion } from 'motion/react'
-import { Plus, ArrowLeft } from 'lucide-react'
-import { DndContext, DragEndEvent, closestCorners } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { BoardColumn } from '@/components/column/board-column'
-import { useBoardStore } from '@/store/use-board-store'
+import { useState } from "react";
+import { useParams, useNavigate } from "@tanstack/react-router";
+import { motion } from "motion/react";
+import { Plus, ArrowLeft } from "lucide-react";
+import { DndContext, closestCorners } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { BoardColumn } from "@/components/column/board-column";
+import { useBoardStore } from "@/store/use-board-store";
 
 const BoardPage = () => {
-  const params = useParams({ from: '/board/$boardId' })
-  const navigate = useNavigate()
-  const store = useBoardStore()
-  const [showAddColumn, setShowAddColumn] = useState(false)
-  const [newColumnName, setNewColumnName] = useState('')
+  const params = useParams({ from: "/_app/board/$boardId" });
+  const navigate = useNavigate();
+  const store = useBoardStore();
+  const [showAddColumn, setShowAddColumn] = useState(false);
+  const [newColumnName, setNewColumnName] = useState("");
 
-  const board = store.boards.find(b => b.id === params.boardId)
+  const board = store.boards.find((b) => b.id === params.boardId);
   const boardColumns = store.columns
-    .filter(c => c.boardId === params.boardId)
-    .sort((a, b) => a.order - b.order)
-  const boardTasks = store.tasks.filter(t =>
-    boardColumns.some(c => c.id === t.columnId)
-  )
+    .filter((c) => c.boardId === params.boardId)
+    .sort((a, b) => a.order - b.order);
+  const boardTasks = store.tasks.filter((t) =>
+    boardColumns.some((c) => c.id === t.columnId),
+  );
 
   if (!board) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-background">
         <div className="text-center px-4">
           <h1 className="text-2xl font-bold text-text mb-2">Board not found</h1>
-          <Button onClick={() => navigate({ to: '/' })}>Go back home</Button>
+          <Button onClick={() => navigate({ to: "/" })}>Go back home</Button>
         </div>
       </div>
-    )
+    );
   }
 
   const handleAddColumn = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (newColumnName.trim()) {
-      store.addColumn(params.boardId, newColumnName)
-      setNewColumnName('')
-      setShowAddColumn(false)
+      store.addColumn(params.boardId, newColumnName);
+      setNewColumnName("");
+      setShowAddColumn(false);
     }
-  }
+  };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+  const handleDragEnd = (event: {
+    active: { id: string | number };
+    over: { id: string | number } | null;
+  }) => {
+    const { active, over } = event;
 
-    if (!over) return
+    if (!over) return;
 
-    const activeTask = boardTasks.find(t => t.id === active.id)
-    if (!activeTask) return
+    const activeTask = boardTasks.find((t) => t.id === active.id);
+    if (!activeTask) return;
 
-    const overColumn = boardColumns.find(c => c.id === over.id)
-    const overTask = boardTasks.find(t => t.id === over.id)
+    const overColumn = boardColumns.find((c) => c.id === over.id);
+    const overTask = boardTasks.find((t) => t.id === over.id);
 
     if (overColumn) {
-      const columnTasks = boardTasks.filter(t => t.columnId === overColumn.id)
-      store.moveTask(activeTask.id, overColumn.id, columnTasks.length)
+      const columnTasks = boardTasks.filter(
+        (t) => t.columnId === overColumn.id,
+      );
+      store.moveTask(activeTask.id, overColumn.id, columnTasks.length);
     } else if (overTask) {
       const columnTasks = boardTasks
-        .filter(t => t.columnId === overTask.columnId)
-        .sort((a, b) => a.order - b.order)
+        .filter((t) => t.columnId === overTask.columnId)
+        .sort((a, b) => a.order - b.order);
 
-      const oldIndex = columnTasks.findIndex(t => t.id === activeTask.id)
-      const newIndex = columnTasks.findIndex(t => t.id === overTask.id)
+      const oldIndex = columnTasks.findIndex((t) => t.id === activeTask.id);
+      const newIndex = columnTasks.findIndex((t) => t.id === overTask.id);
 
       if (activeTask.columnId === overTask.columnId) {
-        const reordered = arrayMove(columnTasks, oldIndex, newIndex)
-        store.reorderTasks(activeTask.columnId, reordered.map((t, i) => ({ ...t, order: i })))
+        const reordered = arrayMove(columnTasks, oldIndex, newIndex);
+        store.reorderTasks(
+          activeTask.columnId,
+          reordered.map((t, i) => ({ ...t, order: i })),
+        );
       } else {
         const targetColumnTasks = boardTasks
-          .filter(t => t.columnId === overTask.columnId)
-          .sort((a, b) => a.order - b.order)
+          .filter((t) => t.columnId === overTask.columnId)
+          .sort((a, b) => a.order - b.order);
 
-        const insertIndex = Math.min(newIndex, targetColumnTasks.length)
-        store.moveTask(activeTask.id, overTask.columnId, insertIndex)
+        const insertIndex = Math.min(newIndex, targetColumnTasks.length);
+        store.moveTask(activeTask.id, overTask.columnId, insertIndex);
       }
     }
-  }
+  };
 
   return (
     <div className="min-h-dvh bg-background pt-20 pb-16 px-4">
@@ -93,7 +101,7 @@ const BoardPage = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate({ to: '/' })}
+            onClick={() => navigate({ to: "/" })}
             className="text-text-secondary hover:text-text"
             type="button"
           >
@@ -107,7 +115,10 @@ const BoardPage = () => {
           </div>
         </motion.div>
 
-        <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+        <DndContext
+          onDragEnd={handleDragEnd}
+          collisionDetection={closestCorners}
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -118,7 +129,9 @@ const BoardPage = () => {
               <BoardColumn
                 key={column.id}
                 column={column}
-                tasks={boardTasks.filter(t => t.columnId === column.id).sort((a, b) => a.order - b.order)}
+                tasks={boardTasks
+                  .filter((t) => t.columnId === column.id)
+                  .sort((a, b) => a.order - b.order)}
               />
             ))}
 
@@ -129,7 +142,10 @@ const BoardPage = () => {
                 onSubmit={handleAddColumn}
                 className="flex-shrink-0 w-full sm:w-80 p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
               >
-                <Label htmlFor="column-name" className="text-sm font-medium text-text">
+                <Label
+                  htmlFor="column-name"
+                  className="text-sm font-medium text-text"
+                >
                   Column name
                 </Label>
                 <Input
@@ -139,9 +155,9 @@ const BoardPage = () => {
                   onChange={(e) => setNewColumnName(e.currentTarget.value)}
                   placeholder="e.g., To Do"
                   onKeyDown={(e) => {
-                    if (e.key === 'Escape') {
-                      setShowAddColumn(false)
-                      setNewColumnName('')
+                    if (e.key === "Escape") {
+                      setShowAddColumn(false);
+                      setNewColumnName("");
                     }
                   }}
                 />
@@ -150,8 +166,8 @@ const BoardPage = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setShowAddColumn(false)
-                      setNewColumnName('')
+                      setShowAddColumn(false);
+                      setNewColumnName("");
                     }}
                     className="flex-1"
                     type="button"
@@ -181,8 +197,7 @@ const BoardPage = () => {
         </DndContext>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BoardPage
-
+export default BoardPage;
