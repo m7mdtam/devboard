@@ -1,8 +1,16 @@
 import { createRoute, Outlet } from '@tanstack/react-router'
+import { Navbar } from '@/components/shared/navbar'
 import { Route as rootRoute } from './__root'
 
 function AppLayout() {
-  return <Outlet />
+  return (
+    <>
+      <Navbar />
+      <div className="pt-16">
+        <Outlet />
+      </div>
+    </>
+  )
 }
 
 export const Route = createRoute({
