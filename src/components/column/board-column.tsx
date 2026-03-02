@@ -19,33 +19,22 @@ interface BoardColumnProps {
 }
 
 export function BoardColumn(props: BoardColumnProps) {
-  const store = useBoardStore();
+  const addTask = useBoardStore((state) => state.addTask);
+  const deleteColumn = useBoardStore((state) => state.deleteColumn);
   const { setNodeRef } = useDroppable({ id: props.column.id });
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
   const handleAddTask = (data: TaskFormInput) => {
-    store.addTask(props.column.id, data);
+    addTask(props.column.id, data);
     setShowForm(false);
   };
 
   const handleDeleteColumn = () => {
     if (window.confirm(`Delete column "${props.column.title}"?`)) {
-      store.deleteColumn(props.column.id);
+      deleteColumn(props.column.id);
     }
   };
-
-  const columnColors = {
-    "To Do":
-      "from-blue-500/10 to-blue-500/5 border-blue-200 dark:border-blue-800",
-    "In Progress":
-      "from-orange-500/10 to-orange-500/5 border-orange-200 dark:border-orange-800",
-    Done: "from-green-500/10 to-green-500/5 border-green-200 dark:border-green-800",
-  };
-
-  const colorGradient =
-    (columnColors as Record<string, string>)[props.column.title] ||
-    "from-primary/10 to-primary/5";
 
   return (
     <motion.div
@@ -53,7 +42,7 @@ export function BoardColumn(props: BoardColumnProps) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
-      className="shrink-0 w-full sm:w-80 flex flex-col rounded-2xl border border-border bg-gradient-to-b bg-surface overflow-hidden"
+      className="shrink-0 w-full sm:w-80 flex flex-col rounded-2xl border border-border bg-linear-to-b bg-surface overflow-hidden"
     >
       <div className="p-4 border-b border-border bg-surface hover:bg-surface-raised transition-colors group">
         <div className="flex items-center justify-between mb-2">

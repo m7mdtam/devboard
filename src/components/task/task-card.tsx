@@ -12,12 +12,12 @@ interface TaskCardProps {
 }
 
 export function TaskCard(props: TaskCardProps) {
-  const store = useBoardStore();
+  const deleteTask = useBoardStore((state) => state.deleteTask);
   const sortable = useSortable({ id: props.task.id });
 
   const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation();
-    store.deleteTask(props.task.id);
+    deleteTask(props.task.id);
   };
 
   const priorityVariant =

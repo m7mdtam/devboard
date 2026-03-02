@@ -25,7 +25,7 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex flex-row items-center justify-between">
         <Link to="/" className="flex flex-row items-center gap-2">
-          <div className="bg-gradient-to-br from-primary to-secondary rounded-md w-6 h-6" />
+          <div className="bg-linear-to-br from-primary to-secondary rounded-md w-6 h-6" />
           <span className="font-display font-bold text-text text-lg hidden sm:inline">
             DevBoard
           </span>

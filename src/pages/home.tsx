@@ -20,13 +20,15 @@ type CreateBoardInput = z.infer<typeof createBoardSchema>;
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const store = useBoardStore();
+  const boards = useBoardStore((state) => state.boards);
+  const addBoard = useBoardStore((state) => state.addBoard);
+  const deleteBoard = useBoardStore((state) => state.deleteBoard);
   const form = useForm<CreateBoardInput>({
     resolver: zodResolver(createBoardSchema),
   });
 
   const handleSubmit = (data: CreateBoardInput) => {
-    store.addBoard(data.name);
+    addBoard(data.name);
     form.reset();
   };
 
@@ -36,7 +38,7 @@ const HomePage = () => {
 
   const handleDelete = (boardId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    store.deleteBoard(boardId);
+    deleteBoard(boardId);
   };
 
   const containerVariants = {
@@ -113,7 +115,7 @@ const HomePage = () => {
           </form>
         </motion.div>
 
-        {store.boards.length === 0 ? (
+        {boards.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -130,18 +132,18 @@ const HomePage = () => {
         ) : (
           <motion.div
             variants={containerVariants}
-            initial="hidden"
+            initial={false}
             animate="visible"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {store.boards.map((board) => (
+            {boards.map((board) => (
               <motion.div
                 key={board.id}
                 variants={itemVariants}
                 className="group relative p-6 rounded-2xl border border-border bg-surface hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
                 onClick={() => handleBoardClick(board.id)}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-4">
@@ -166,7 +168,7 @@ const HomePage = () => {
                     {[...Array(3)].map((_, index) => (
                       <div
                         key={index}
-                        className="flex-1 h-1 rounded-full bg-gradient-to-r from-primary to-primary/50"
+                        className="flex-1 h-1 rounded-full bg-linear-to-r from-primary to-primary/50"
                         style={{ opacity: 1 - index * 0.2 }}
                       />
                     ))}

@@ -13,15 +13,20 @@ import { useBoardStore } from "@/store/use-board-store";
 const BoardPage = () => {
   const params = useParams({ from: "/_app/board/$boardId" });
   const navigate = useNavigate();
-  const store = useBoardStore();
+  const boards = useBoardStore((state) => state.boards);
+  const columns = useBoardStore((state) => state.columns);
+  const tasks = useBoardStore((state) => state.tasks);
+  const addColumn = useBoardStore((state) => state.addColumn);
+  const moveTask = useBoardStore((state) => state.moveTask);
+  const reorderTasks = useBoardStore((state) => state.reorderTasks);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
 
-  const board = store.boards.find((b) => b.id === params.boardId);
-  const boardColumns = store.columns
+  const board = boards.find((b) => b.id === params.boardId);
+  const boardColumns = columns
     .filter((c) => c.boardId === params.boardId)
     .sort((a, b) => a.order - b.order);
-  const boardTasks = store.tasks.filter((t) =>
+  const boardTasks = tasks.filter((t) =>
     boardColumns.some((c) => c.id === t.columnId),
   );
 
@@ -39,7 +44,7 @@ const BoardPage = () => {
   const handleAddColumn = (e: React.FormEvent) => {
     e.preventDefault();
     if (newColumnName.trim()) {
-      store.addColumn(params.boardId, newColumnName);
+      addColumn(params.boardId, newColumnName);
       setNewColumnName("");
       setShowAddColumn(false);
     }
@@ -63,7 +68,7 @@ const BoardPage = () => {
       const columnTasks = boardTasks.filter(
         (t) => t.columnId === overColumn.id,
       );
-      store.moveTask(activeTask.id, overColumn.id, columnTasks.length);
+      moveTask(activeTask.id, overColumn.id, columnTasks.length);
     } else if (overTask) {
       const columnTasks = boardTasks
         .filter((t) => t.columnId === overTask.columnId)
@@ -74,7 +79,7 @@ const BoardPage = () => {
 
       if (activeTask.columnId === overTask.columnId) {
         const reordered = arrayMove(columnTasks, oldIndex, newIndex);
-        store.reorderTasks(
+        reorderTasks(
           activeTask.columnId,
           reordered.map((t, i) => ({ ...t, order: i })),
         );
@@ -84,7 +89,7 @@ const BoardPage = () => {
           .sort((a, b) => a.order - b.order);
 
         const insertIndex = Math.min(newIndex, targetColumnTasks.length);
-        store.moveTask(activeTask.id, overTask.columnId, insertIndex);
+        moveTask(activeTask.id, overTask.columnId, insertIndex);
       }
     }
   };
@@ -140,7 +145,7 @@ const BoardPage = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 onSubmit={handleAddColumn}
-                className="flex-shrink-0 w-full sm:w-80 p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
+                className="shrink-0 w-full sm:w-80 p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
               >
                 <Label
                   htmlFor="column-name"
@@ -184,7 +189,7 @@ const BoardPage = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 onClick={() => setShowAddColumn(true)}
-                className="flex-shrink-0 w-full sm:w-80 h-fit p-4 rounded-2xl border border-dashed border-border hover:border-primary hover:bg-surface-raised transition-all group cursor-pointer"
+                className="shrink-0 w-full sm:w-80 h-fit p-4 rounded-2xl border border-dashed border-border hover:border-primary hover:bg-surface-raised transition-all group cursor-pointer"
                 type="button"
               >
                 <div className="flex items-center justify-center gap-2 text-text-secondary group-hover:text-primary transition-colors">
