@@ -42,7 +42,7 @@ export function BoardColumn(props: BoardColumnProps) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
-      className="shrink-0 w-full sm:w-80 flex flex-col rounded-2xl border border-border bg-linear-to-b bg-surface overflow-hidden"
+      className="w-full flex flex-col rounded-2xl border border-border bg-linear-to-b bg-surface overflow-hidden"
     >
       <div className="p-4 border-b border-border bg-surface hover:bg-surface-raised transition-colors group">
         <div className="flex items-center justify-between mb-2">

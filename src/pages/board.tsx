@@ -105,12 +105,13 @@ const BoardPage = () => {
         >
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={() => navigate({ to: "/" })}
-            className="text-text-secondary hover:text-text"
+            className="text-text-secondary hover:text-text gap-2"
             type="button"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={24} />
+            <span className="hidden sm:inline">Back</span>
           </Button>
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-text">{board.name}</h1>
@@ -128,7 +129,7 @@ const BoardPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex overflow-x-auto gap-6 pb-4"
+            className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 pb-4 auto-rows-max"
           >
             {boardColumns.map((column) => (
               <BoardColumn
@@ -145,7 +146,7 @@ const BoardPage = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 onSubmit={handleAddColumn}
-                className="shrink-0 w-full sm:w-80 p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
+                className="w-full p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
               >
                 <Label
                   htmlFor="column-name"
@@ -189,7 +190,7 @@ const BoardPage = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 onClick={() => setShowAddColumn(true)}
-                className="shrink-0 w-full sm:w-80 h-fit p-4 rounded-2xl border border-dashed border-border hover:border-primary hover:bg-surface-raised transition-all group cursor-pointer"
+                className="w-full h-fit p-4 rounded-2xl border border-dashed border-border hover:border-primary hover:bg-surface-raised transition-all group cursor-pointer"
                 type="button"
               >
                 <div className="flex items-center justify-center gap-2 text-text-secondary group-hover:text-primary transition-colors">

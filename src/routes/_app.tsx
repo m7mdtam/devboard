@@ -6,7 +6,7 @@ function AppLayout() {
   return (
     <>
       <Navbar />
-      <div className="pt-26">
+      <div className="pt-20 px-3 py-6 sm:px-4 sm:py-8 md:py-12">
         <Outlet />
       </div>
     </>

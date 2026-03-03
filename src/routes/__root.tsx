@@ -18,6 +18,7 @@ function RootComponent() {
       theme === "dark" ||
       (theme === "system" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedTheme(isDark ? "dark" : "light");
   }, [theme]);
 
