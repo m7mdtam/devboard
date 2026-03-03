@@ -79,7 +79,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
             <DrawerTitle className="text-xl font-bold text-text">{props.title}</DrawerTitle>
             <DrawerClose className="opacity-0 pointer-events-none" />
           </DrawerHeader>
-          <div className="px-4 pb-6 max-h-[80vh] overflow-y-auto">
+          <div className="w-full px-4 pb-6 max-h-[80vh] overflow-y-auto">
             <TaskForm
               form={form}
               onSubmit={handleSubmit}
