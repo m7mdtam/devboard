@@ -37,10 +37,7 @@ export function ColumnForm(props: ColumnFormProps) {
         onSubmit={handleSubmit}
         className="w-full p-4 rounded-2xl border-2 border-dashed border-border bg-surface-raised flex flex-col gap-2"
       >
-        <Label
-          htmlFor="column-name"
-          className="text-sm font-medium text-text"
-        >
+        <Label htmlFor="column-name" className="text-sm font-medium text-text">
           Column name
         </Label>
         <Input

@@ -30,9 +30,7 @@ export function useBoardDnd(boardColumns: Column[], boardTasks: Task[]) {
     const overTask = boardTasks.find((t) => t.id === over.id);
 
     if (overColumn) {
-      const columnTasks = boardTasks.filter(
-        (t) => t.columnId === overColumn.id
-      );
+      const columnTasks = boardTasks.filter((t) => t.columnId === overColumn.id);
       moveTask(activeTask.id, overColumn.id, columnTasks.length);
     } else if (overTask) {
       const columnTasks = boardTasks

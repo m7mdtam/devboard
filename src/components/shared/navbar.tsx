@@ -8,8 +8,7 @@ export function Navbar() {
 
   const isDark =
     theme.theme === "dark" ||
-    (theme.theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+    (theme.theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const toggleTheme = () => {
     theme.setTheme(isDark ? "light" : "dark");

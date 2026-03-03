@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Trash2, Pencil, Flag, Calendar } from "lucide-react";
@@ -16,10 +17,7 @@ type TaskCardProps = {
   task: Task;
 };
 
-const PRIORITY_BADGE_VARIANT: Record<
-  Task["priority"],
-  "secondary" | "outline" | "destructive"
-> = {
+const PRIORITY_BADGE_VARIANT: Record<Task["priority"], "secondary" | "outline" | "destructive"> = {
   low: "secondary",
   medium: "outline",
   high: "destructive",
@@ -47,9 +45,7 @@ export function TaskCard(props: TaskCardProps) {
 
       <div className="relative z-10 flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="text-sm font-medium text-text flex-1 line-clamp-2">
-            {props.task.title}
-          </h4>
+          <h4 className="text-sm font-medium text-text flex-1 line-clamp-2">{props.task.title}</h4>
 
           <div className="flex gap-0.5 shrink-0 pointer-events-auto">
             <Button
@@ -84,16 +80,13 @@ export function TaskCard(props: TaskCardProps) {
         </div>
 
         {props.task.description && (
-          <p className="text-xs text-text-secondary line-clamp-2">
-            {props.task.description}
-          </p>
+          <p className="text-xs text-text-secondary line-clamp-2">{props.task.description}</p>
         )}
 
         <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50">
           <Badge variant={PRIORITY_BADGE_VARIANT[props.task.priority]}>
             <Flag size={12} />
-            {props.task.priority.charAt(0).toUpperCase() +
-              props.task.priority.slice(1)}
+            {props.task.priority.charAt(0).toUpperCase() + props.task.priority.slice(1)}
           </Badge>
 
           {props.task.dueDate && (
@@ -140,9 +133,7 @@ export function TaskCard(props: TaskCardProps) {
               {cardContent}
             </ElectricBorder>
           ) : (
-            <div className="rounded-lg border border-border/60">
-              {cardContent}
-            </div>
+            <div className="rounded-lg border border-border/60">{cardContent}</div>
           )}
         </motion.div>
       </div>

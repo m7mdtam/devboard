@@ -76,9 +76,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
       <Drawer open={props.isOpen} onOpenChange={props.onClose}>
         <DrawerContent className="bg-surface border-t border-border">
           <DrawerHeader className="flex items-center justify-between px-4 pt-4 pb-2">
-            <DrawerTitle className="text-xl font-bold text-text">
-              {props.title}
-            </DrawerTitle>
+            <DrawerTitle className="text-xl font-bold text-text">{props.title}</DrawerTitle>
             <DrawerClose className="opacity-0 pointer-events-none" />
           </DrawerHeader>
           <div className="px-4 pb-6 max-h-[80vh] overflow-y-auto">

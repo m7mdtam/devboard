@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
@@ -9,10 +10,8 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground [a&]:hover:bg-primary-hover",
-        secondary:
-          "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary-hover",
+        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary-hover",
+        secondary: "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary-hover",
         destructive:
           "bg-destructive text-white focus-visible:ring-destructive/20 [a&]:hover:bg-destructive/90",
         outline: "border border-border text-text [a&]:hover:bg-border",
@@ -23,12 +22,11 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 function Badge(
-  props: React.ComponentProps<"span"> &
-    VariantProps<typeof badgeVariants> & { asChild?: boolean },
+  props: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }
 ) {
   const { className, variant, asChild, ...rest } = props;
   const Comp = asChild ? Slot.Root : "span";

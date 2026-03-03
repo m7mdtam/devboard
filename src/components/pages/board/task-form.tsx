@@ -26,10 +26,7 @@ type TaskFormProps = {
 export function TaskForm(props: TaskFormProps) {
   return (
     <Form {...props.form}>
-      <form
-        onSubmit={props.form.handleSubmit(props.onSubmit)}
-        className="space-y-4"
-      >
+      <form onSubmit={props.form.handleSubmit(props.onSubmit)} className="space-y-4">
         <FormField
           control={props.form.control}
           name="title"
@@ -37,11 +34,7 @@ export function TaskForm(props: TaskFormProps) {
             <FormItem>
               <FormLabel>Task Title</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="What needs to be done?"
-                  {...renderData.field}
-                />
+                <Input type="text" placeholder="What needs to be done?" {...renderData.field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -55,10 +48,7 @@ export function TaskForm(props: TaskFormProps) {
             <FormItem>
               <FormLabel>Description (Optional)</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Add more details..."
-                  {...renderData.field}
-                />
+                <Textarea placeholder="Add more details..." {...renderData.field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,13 +78,8 @@ export function TaskForm(props: TaskFormProps) {
                           : "border-border hover:border-primary text-text"
                       )}
                     >
-                      <RadioGroupItem
-                        value={priority}
-                        id={`priority-${priority}`}
-                      />
-                      <span className="text-sm font-medium capitalize">
-                        {priority}
-                      </span>
+                      <RadioGroupItem value={priority} id={`priority-${priority}`} />
+                      <span className="text-sm font-medium capitalize">{priority}</span>
                     </Label>
                   ))}
                 </RadioGroup>
@@ -119,12 +104,7 @@ export function TaskForm(props: TaskFormProps) {
         />
 
         <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            onClick={props.onCancel}
-            className="flex-1"
-            type="button"
-          >
+          <Button variant="outline" onClick={props.onCancel} className="flex-1" type="button">
             Cancel
           </Button>
           <Button type="submit" className="flex-1">

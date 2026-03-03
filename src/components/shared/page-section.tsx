@@ -11,7 +11,7 @@ export function PageSection({ children, className }: PageSectionProps) {
     <div
       className={cn(
         "p-4 sm:p-5 md:p-4 rounded-2xl bg-surface-raised border border-border/60",
-        className,
+        className
       )}
     >
       {children}

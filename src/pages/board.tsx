@@ -20,12 +20,12 @@ const BoardPage = () => {
   const boardColumns = columns
     .filter((c) => c.boardId === params.boardId)
     .sort((a, b) => a.order - b.order);
-  const boardTasks = tasks.filter((t) =>
-    boardColumns.some((c) => c.id === t.columnId)
-  );
+  const boardTasks = tasks.filter((t) => boardColumns.some((c) => c.id === t.columnId));
 
-  const { activeId, handleDragStart, handleDragCancel, handleDragEnd } =
-    useBoardDnd(boardColumns, boardTasks);
+  const { activeId, handleDragStart, handleDragCancel, handleDragEnd } = useBoardDnd(
+    boardColumns,
+    boardTasks
+  );
 
   if (!board) {
     return (
@@ -68,9 +68,7 @@ const BoardPage = () => {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text mb-1 sm:mb-2">
             {board.name}
           </h1>
-          <p className="text-sm sm:text-base text-text-secondary">
-            Manage your tasks and projects
-          </p>
+          <p className="text-sm sm:text-base text-text-secondary">Manage your tasks and projects</p>
         </motion.div>
 
         <DndContext

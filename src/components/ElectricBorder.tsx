@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useCallback,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import React, { useEffect, useRef, useCallback, type CSSProperties, type ReactNode } from "react";
 
 function hexToRgba(hex: string, alpha: number = 1): string {
   if (!hex) return `rgba(0,0,0,${alpha})`;
@@ -66,14 +60,9 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       const ux = fx * fx * (3.0 - 2.0 * fx);
       const uy = fy * fy * (3.0 - 2.0 * fy);
 
-      return (
-        a * (1 - ux) * (1 - uy) +
-        b * ux * (1 - uy) +
-        c * (1 - ux) * uy +
-        d * ux * uy
-      );
+      return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
     },
-    [random],
+    [random]
   );
 
   const octavedNoise = useCallback(
@@ -86,7 +75,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       baseFrequency: number,
       time: number,
       seed: number,
-      baseFlatness: number,
+      baseFlatness: number
     ): number => {
       let y = 0;
       let amplitude = baseAmplitude;
@@ -97,16 +86,14 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
         if (i === 0) {
           octaveAmplitude *= baseFlatness;
         }
-        y +=
-          octaveAmplitude *
-          noise2D(frequency * x + seed * 100, time * frequency * 0.3);
+        y += octaveAmplitude * noise2D(frequency * x + seed * 100, time * frequency * 0.3);
         frequency *= lacunarity;
         amplitude *= gain;
       }
 
       return y;
     },
-    [noise2D],
+    [noise2D]
   );
 
   const getCornerPoint = useCallback(
@@ -116,7 +103,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       radius: number,
       startAngle: number,
       arcLength: number,
-      progress: number,
+      progress: number
     ): { x: number; y: number } => {
       const angle = startAngle + progress * arcLength;
       return {
@@ -124,7 +111,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
         y: centerY + radius * Math.sin(angle),
       };
     },
-    [],
+    []
   );
 
   const getRoundedRectPoint = useCallback(
@@ -134,13 +121,12 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       top: number,
       width: number,
       height: number,
-      radius: number,
+      radius: number
     ): { x: number; y: number } => {
       const straightWidth = width - 2 * radius;
       const straightHeight = height - 2 * radius;
       const cornerArc = (Math.PI * radius) / 2;
-      const totalPerimeter =
-        2 * straightWidth + 2 * straightHeight + 4 * cornerArc;
+      const totalPerimeter = 2 * straightWidth + 2 * straightHeight + 4 * cornerArc;
       const distance = t * totalPerimeter;
 
       let accumulated = 0;
@@ -159,7 +145,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
           radius,
           -Math.PI / 2,
           Math.PI / 2,
-          progress,
+          progress
         );
       }
       accumulated += cornerArc;
@@ -178,7 +164,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
           radius,
           0,
           Math.PI / 2,
-          progress,
+          progress
         );
       }
       accumulated += cornerArc;
@@ -200,7 +186,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
           radius,
           Math.PI / 2,
           Math.PI / 2,
-          progress,
+          progress
         );
       }
       accumulated += cornerArc;
@@ -215,16 +201,9 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       accumulated += straightHeight;
 
       const progress = (distance - accumulated) / cornerArc;
-      return getCornerPoint(
-        left + radius,
-        top + radius,
-        radius,
-        Math.PI,
-        Math.PI / 2,
-        progress,
-      );
+      return getCornerPoint(left + radius, top + radius, radius, Math.PI, Math.PI / 2, progress);
     },
-    [getCornerPoint],
+    [getCornerPoint]
   );
 
   useEffect(() => {
@@ -286,8 +265,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       const maxRadius = Math.min(borderWidth, borderHeight) / 2;
       const radius = Math.min(borderRadius, maxRadius);
 
-      const approximatePerimeter =
-        2 * (borderWidth + borderHeight) + 2 * Math.PI * radius;
+      const approximatePerimeter = 2 * (borderWidth + borderHeight) + 2 * Math.PI * radius;
       const sampleCount = Math.floor(approximatePerimeter / 2);
 
       ctx.beginPath();
@@ -295,14 +273,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
       for (let i = 0; i <= sampleCount; i++) {
         const progress = i / sampleCount;
 
-        const point = getRoundedRectPoint(
-          progress,
-          left,
-          top,
-          borderWidth,
-          borderHeight,
-          radius,
-        );
+        const point = getRoundedRectPoint(progress, left, top, borderWidth, borderHeight, radius);
 
         const xNoise = octavedNoise(
           progress * 8,
@@ -313,7 +284,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
           frequency,
           timeRef.current,
           0,
-          baseFlatness,
+          baseFlatness
         );
         const yNoise = octavedNoise(
           progress * 8,
@@ -324,7 +295,7 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
           frequency,
           timeRef.current,
           1,
-          baseFlatness,
+          baseFlatness
         );
 
         const displacedX = point.x + xNoise * scale;

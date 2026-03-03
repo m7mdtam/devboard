@@ -38,9 +38,7 @@ export function BoardColumn(props: BoardColumnProps) {
       >
         <div className="p-4 border-b border-border bg-surface hover:bg-surface-raised transition-colors">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-text line-clamp-1 flex-1">
-              {props.column.title}
-            </h3>
+            <h3 className="font-semibold text-text line-clamp-1 flex-1">{props.column.title}</h3>
             <Button
               variant="ghost"
               size="icon-sm"
@@ -57,10 +55,7 @@ export function BoardColumn(props: BoardColumnProps) {
           </p>
         </div>
 
-        <div
-          ref={setNodeRef}
-          className="flex-1 p-4 overflow-y-auto space-y-3 max-h-96"
-        >
+        <div ref={setNodeRef} className="flex-1 p-4 overflow-y-auto space-y-3 max-h-96">
           <SortableContext
             items={props.tasks.map((t) => t.id)}
             strategy={verticalListSortingStrategy}

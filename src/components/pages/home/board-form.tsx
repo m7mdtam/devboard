@@ -31,10 +31,7 @@ export function BoardForm(props: BoardFormProps) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-3 sm:gap-4"
-      >
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-3 sm:gap-4">
         <FormField
           control={form.control}
           name="name"
@@ -45,16 +42,9 @@ export function BoardForm(props: BoardFormProps) {
               </FormLabel>
               <div className="flex flex-col sm:flex-row gap-2">
                 <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter board name..."
-                    {...renderData.field}
-                  />
+                  <Input type="text" placeholder="Enter board name..." {...renderData.field} />
                 </FormControl>
-                <Button
-                  type="submit"
-                  className="w-full sm:w-auto gap-2 cursor-pointer"
-                >
+                <Button type="submit" className="w-full sm:w-auto gap-2 cursor-pointer">
                   <Plus size={18} />
                   <span className="hidden sm:inline">Create</span>
                 </Button>

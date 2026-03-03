@@ -5,11 +5,7 @@ import { codeInspectorPlugin } from "code-inspector-plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    codeInspectorPlugin({ bundler: "vite" }),
-  ],
+  plugins: [react(), tailwindcss(), codeInspectorPlugin({ bundler: "vite" })],
 
   resolve: {
     alias: {
