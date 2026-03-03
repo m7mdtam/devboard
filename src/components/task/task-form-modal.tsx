@@ -54,7 +54,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
           title: "",
           description: "",
           priority: "medium",
-          dueDate: "",
+          dueDate: new Date().toISOString().split("T")[0],
         },
   });
 
@@ -187,7 +187,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
 
             <div className="flex gap-2 pt-2">
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={props.onClose}
                 className="flex-1"
                 type="button"
