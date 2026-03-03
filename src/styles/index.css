@@ -1,0 +1,7 @@
+@import url('https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap');
+
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./colors.css";
+@import "./theme.css";
+@import "./base.css";
