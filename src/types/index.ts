@@ -22,3 +22,14 @@ export type Task = {
   dueDate?: string;
   order: number;
 };
+
+export type BoardFormInput = {
+  name: string;
+};
+
+export type TaskFormInput = {
+  title: string;
+  description?: string;
+  priority: Priority;
+  dueDate?: string;
+};

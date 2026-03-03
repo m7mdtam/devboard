@@ -1,84 +1,41 @@
-/* eslint-disable react-hooks/refs */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { Trash2, Pencil, Flag, Calendar } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import ElectricBorder from "@/components/ElectricBorder";
-import {
-  TaskFormModal,
-  type TaskFormInput,
-} from "@/components/task/task-form-modal";
-import type { Task } from "@/types";
+import { TaskFormModal } from "./task-form-modal";
 import { useBoardStore } from "@/store/use-board-store";
+import { PRIORITY_ELECTRIC_COLORS } from "@/constants";
+import type { Task, TaskFormInput } from "@/types";
 
-interface TaskCardProps {
+type TaskCardProps = {
   task: Task;
-}
+};
+
+const PRIORITY_BADGE_VARIANT: Record<
+  Task["priority"],
+  "secondary" | "outline" | "destructive"
+> = {
+  low: "secondary",
+  medium: "outline",
+  high: "destructive",
+};
 
 export function TaskCard(props: TaskCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteTask = useBoardStore((state) => state.deleteTask);
   const updateTask = useBoardStore((state) => state.updateTask);
   const sortable = useSortable({ id: props.task.id });
 
-  useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditModalOpen(true);
-  };
-
   const handleEditSubmit = (data: TaskFormInput) => {
-    updateTask(props.task.id, {
-      title: data.title,
-      description: data.description,
-      priority: data.priority,
-      dueDate: data.dueDate,
-    });
+    updateTask(props.task.id, data);
   };
-
-  const confirmDelete = () => {
-    deleteTask(props.task.id);
-    setIsDeleteDialogOpen(false);
-  };
-
-  const priorityVariant =
-    props.task.priority === "low"
-      ? "secondary"
-      : props.task.priority === "medium"
-        ? "outline"
-        : "destructive";
-
-  const electricBorderColor = {
-    high: "#D92d3f", // red
-    medium: "#FFA500", // orange
-    low: "#7b8fc9", // blue
-  }[props.task.priority];
 
   const cardContent = (
     <div
@@ -98,7 +55,10 @@ export function TaskCard(props: TaskCardProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={handleEdit}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditOpen(true);
+              }}
               className="cursor-pointer text-text-secondary hover:text-secondary hover:bg-secondary/10 pointer-events-auto"
               type="button"
               aria-label="Edit task"
@@ -111,7 +71,7 @@ export function TaskCard(props: TaskCardProps) {
               size="icon-sm"
               onClick={(e) => {
                 e.stopPropagation();
-                setIsDeleteDialogOpen(true);
+                setIsDeleteOpen(true);
               }}
               className="cursor-pointer text-text-secondary hover:text-destructive hover:bg-destructive/10 pointer-events-auto"
               type="button"
@@ -130,7 +90,7 @@ export function TaskCard(props: TaskCardProps) {
         )}
 
         <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50">
-          <Badge variant={priorityVariant}>
+          <Badge variant={PRIORITY_BADGE_VARIANT[props.task.priority]}>
             <Flag size={12} />
             {props.task.priority.charAt(0).toUpperCase() +
               props.task.priority.slice(1)}
@@ -150,8 +110,6 @@ export function TaskCard(props: TaskCardProps) {
     </div>
   );
 
-  const showElectric = isHovered;
-
   return (
     <>
       <div
@@ -161,7 +119,6 @@ export function TaskCard(props: TaskCardProps) {
           transition: sortable.transition,
           zIndex: sortable.isDragging ? 9999 : 0,
           position: sortable.isDragging ? "relative" : "static",
-          opacity: sortable.isDragging ? 1 : undefined,
         }}
         {...sortable.attributes}
         {...sortable.listeners}
@@ -172,11 +129,10 @@ export function TaskCard(props: TaskCardProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          style={{ opacity: sortable.isDragging ? 1 : 1 }}
         >
-          {showElectric ? (
+          {isHovered ? (
             <ElectricBorder
-              color={electricBorderColor}
+              color={PRIORITY_ELECTRIC_COLORS[props.task.priority]}
               speed={0.5}
               chaos={0.05}
               borderRadius={8}
@@ -192,60 +148,24 @@ export function TaskCard(props: TaskCardProps) {
       </div>
 
       <TaskFormModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
         onSubmit={handleEditSubmit}
         task={props.task}
         title="Edit Task"
         submitLabel="Save Changes"
       />
 
-      {isDesktop ? (
-        <AlertDialog
-          open={isDeleteDialogOpen}
-          onOpenChange={setIsDeleteDialogOpen}
-        >
-          <AlertDialogContent>
-            <AlertDialogTitle>Delete Task</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{props.task.title}"? This action
-              cannot be undone.
-            </AlertDialogDescription>
-            <div className="flex gap-2 justify-end">
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={confirmDelete}
-                className="bg-destructive hover:bg-destructive/90"
-              >
-                Yes I'm Sure
-              </AlertDialogAction>
-            </div>
-          </AlertDialogContent>
-        </AlertDialog>
-      ) : (
-        <Sheet open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <SheetContent side="bottom" className="rounded-t-2xl">
-            <SheetHeader className="mb-6">
-              <SheetTitle>Delete Task</SheetTitle>
-              <SheetDescription>
-                Are you sure you want to delete "{props.task.title}"? This
-                action cannot be undone.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="flex gap-2 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setIsDeleteDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={confirmDelete}>
-                Yes I'm Sure
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
-      )}
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title="Delete Task"
+        description={`Are you sure you want to delete "${props.task.title}"? This action cannot be undone.`}
+        onConfirm={() => {
+          deleteTask(props.task.id);
+          setIsDeleteOpen(false);
+        }}
+      />
     </>
   );
 }
