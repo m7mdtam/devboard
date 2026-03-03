@@ -1,11 +1,26 @@
 /* eslint-disable react-hooks/refs */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Trash2, Pencil, Flag, Calendar } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import ElectricBorder from "@/components/ElectricBorder";
 import {
   TaskFormModal,
@@ -21,9 +36,17 @@ interface TaskCardProps {
 export function TaskCard(props: TaskCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
   const deleteTask = useBoardStore((state) => state.deleteTask);
   const updateTask = useBoardStore((state) => state.updateTask);
   const sortable = useSortable({ id: props.task.id });
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,6 +60,11 @@ export function TaskCard(props: TaskCardProps) {
       priority: data.priority,
       dueDate: data.dueDate,
     });
+  };
+
+  const confirmDelete = () => {
+    deleteTask(props.task.id);
+    setIsDeleteDialogOpen(false);
   };
 
   const priorityVariant =
@@ -83,7 +111,7 @@ export function TaskCard(props: TaskCardProps) {
               size="icon-sm"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteTask(props.task.id);
+                setIsDeleteDialogOpen(true);
               }}
               className="cursor-pointer text-text-secondary hover:text-destructive hover:bg-destructive/10 pointer-events-auto"
               type="button"
@@ -171,6 +199,53 @@ export function TaskCard(props: TaskCardProps) {
         title="Edit Task"
         submitLabel="Save Changes"
       />
+
+      {isDesktop ? (
+        <AlertDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        >
+          <AlertDialogContent>
+            <AlertDialogTitle>Delete Task</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{props.task.title}"? This action
+              cannot be undone.
+            </AlertDialogDescription>
+            <div className="flex gap-2 justify-end">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Yes I'm Sure
+              </AlertDialogAction>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : (
+        <Sheet open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <SheetContent side="bottom" className="rounded-t-2xl">
+            <SheetHeader className="mb-6">
+              <SheetTitle>Delete Task</SheetTitle>
+              <SheetDescription>
+                Are you sure you want to delete "{props.task.title}"? This
+                action cannot be undone.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Yes I'm Sure
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </>
   );
 }

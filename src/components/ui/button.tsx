@@ -65,9 +65,13 @@ function Button(props: ButtonProps) {
       className={cn(buttonVariants({ variant, size, className }))}
       {...rest}
     >
-      {prefixIcon && <span>{prefixIcon}</span>}
-      {children}
-      {suffixIcon && <span>{suffixIcon}</span>}
+      {asChild ? children : (
+        <>
+          {prefixIcon && <span>{prefixIcon}</span>}
+          {children}
+          {suffixIcon && <span>{suffixIcon}</span>}
+        </>
+      )}
     </Comp>
   );
 }

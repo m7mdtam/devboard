@@ -1,8 +1,24 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import ElectricBorder from "@/components/ElectricBorder";
 import { useBoardStore } from "@/store/use-board-store";
 import type { Board } from "@/types";
@@ -18,7 +34,15 @@ export function BoardCard({ board, onClick }: BoardCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(board.name);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -42,9 +66,14 @@ export function BoardCard({ board, onClick }: BoardCardProps) {
     setIsEditing(false);
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
     deleteBoard(board.id);
+    setIsDeleteOpen(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -122,7 +151,7 @@ export function BoardCard({ board, onClick }: BoardCardProps) {
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={handleDelete}
+                  onClick={handleDeleteClick}
                   className="cursor-pointer text-text-secondary hover:text-destructive hover:bg-destructive/10"
                   type="button"
                   aria-label="Delete board"
@@ -150,20 +179,63 @@ export function BoardCard({ board, onClick }: BoardCardProps) {
   const showElectric = isHovered || isEditing;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {showElectric ? (
-        <ElectricBorder color="#D93025" borderRadius={16}>
-          {cardInner}
-        </ElectricBorder>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {showElectric ? (
+          <ElectricBorder color="#D93025" borderRadius={16}>
+            {cardInner}
+          </ElectricBorder>
+        ) : (
+          <div className="rounded-2xl border border-border/60">{cardInner}</div>
+        )}
+      </motion.div>
+
+      {isDesktop ? (
+        <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogTitle>Delete Board</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{board.name}"? This will delete
+              all columns and tasks within it.
+            </AlertDialogDescription>
+            <div className="flex gap-2 justify-end">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Yes I'm Sure
+              </AlertDialogAction>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
       ) : (
-        <div className="rounded-2xl border border-border/60">{cardInner}</div>
+        <Sheet open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <SheetContent side="bottom" className="rounded-t-2xl">
+            <SheetHeader className="mb-6">
+              <SheetTitle>Delete Board</SheetTitle>
+              <SheetDescription>
+                Are you sure you want to delete "{board.name}"? This will delete
+                all columns and tasks within it.
+              </SheetDescription>
+            </SheetHeader>
+            <SheetFooter>
+              <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Yes I'm Sure
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       )}
-    </motion.div>
+    </>
   );
 }
