@@ -51,15 +51,6 @@ interface TaskFormModalProps {
 export function TaskFormModal(props: TaskFormModalProps) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const form = useForm<TaskFormInput>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: props.task
@@ -76,6 +67,33 @@ export function TaskFormModal(props: TaskFormModalProps) {
           dueDate: new Date().toISOString().split("T")[0],
         },
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (props.isOpen && props.task) {
+      form.reset({
+        title: props.task.title,
+        description: props.task.description || "",
+        priority: props.task.priority,
+        dueDate: props.task.dueDate || "",
+      });
+    } else if (props.isOpen && !props.task) {
+      form.reset({
+        title: "",
+        description: "",
+        priority: "medium",
+        dueDate: new Date().toISOString().split("T")[0],
+      });
+    }
+  }, [props.isOpen, props.task, form]);
 
   const handleFormSubmit = (data: TaskFormInput) => {
     props.onSubmit(data);

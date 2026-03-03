@@ -1,13 +1,16 @@
 /* eslint-disable react-hooks/refs */
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { Trash2, Pencil, Flag, Calendar, Check, X } from "lucide-react";
+import { Trash2, Pencil, Flag, Calendar } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import ElectricBorder from "@/components/ElectricBorder";
+import {
+  TaskFormModal,
+  type TaskFormInput,
+} from "@/components/task/task-form-modal";
 import type { Task } from "@/types";
 import { useBoardStore } from "@/store/use-board-store";
 
@@ -17,40 +20,23 @@ interface TaskCardProps {
 
 export function TaskCard(props: TaskCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(props.task.title);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const deleteTask = useBoardStore((state) => state.deleteTask);
+  const updateTask = useBoardStore((state) => state.updateTask);
   const sortable = useSortable({ id: props.task.id });
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setEditTitle(props.task.title);
-    setIsEditing(true);
-    setTimeout(() => inputRef.current?.select(), 0);
+    setIsEditModalOpen(true);
   };
 
-  const handleSave = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    // TODO: Add update task functionality
-    setIsEditing(false);
-  };
-
-  const handleCancel = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setEditTitle(props.task.title);
-    setIsEditing(false);
-  };
-
-  const handleDelete = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    deleteTask(props.task.id);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    if (e.key === "Enter") handleSave();
-    if (e.key === "Escape") handleCancel();
+  const handleEditSubmit = (data: TaskFormInput) => {
+    updateTask(props.task.id, {
+      title: data.title,
+      description: data.description,
+      priority: data.priority,
+      dueDate: data.dueDate,
+    });
   };
 
   const priorityVariant =
@@ -68,7 +54,7 @@ export function TaskCard(props: TaskCardProps) {
 
   const cardContent = (
     <div
-      className="group relative p-3 sm:p-4 rounded-lg bg-surface transition-shadow duration-200 cursor-grab active:cursor-grabbing"
+      className="group relative p-3 sm:p-4 rounded-lg bg-surface transition-shadow duration-200 cursor-grab active:cursor-grabbing pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -76,141 +62,115 @@ export function TaskCard(props: TaskCardProps) {
 
       <div className="relative z-10 flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            {isEditing ? (
-              <Input
-                ref={inputRef}
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onClick={(e) => e.stopPropagation()}
-                autoFocus
-                className="text-sm"
-              />
-            ) : (
-              <h4 className="text-sm font-medium text-text flex-1 line-clamp-2">
-                {props.task.title}
-              </h4>
-            )}
-          </div>
+          <h4 className="text-sm font-medium text-text flex-1 line-clamp-2">
+            {props.task.title}
+          </h4>
 
-          <div className="flex gap-0.5 shrink-0">
-            {isEditing ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={handleSave}
-                  className="cursor-pointer text-primary hover:bg-primary/10"
-                  type="button"
-                  aria-label="Save"
-                >
-                  <Check size={18} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={handleCancel}
-                  className="cursor-pointer text-text-secondary hover:text-text"
-                  type="button"
-                  aria-label="Cancel"
-                >
-                  <X size={18} />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={handleEdit}
-                  className="cursor-pointer text-text-secondary hover:text-secondary hover:bg-secondary/10"
-                  type="button"
-                  aria-label="Edit task"
-                >
-                  <Pencil size={18} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={handleDelete}
-                  className="cursor-pointer text-text-secondary hover:text-destructive hover:bg-destructive/10"
-                  type="button"
-                  aria-label="Delete task"
-                >
-                  <Trash2 size={18} />
-                </Button>
-              </>
-            )}
+          <div className="flex gap-0.5 shrink-0 pointer-events-auto">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleEdit}
+              className="cursor-pointer text-text-secondary hover:text-secondary hover:bg-secondary/10 pointer-events-auto"
+              type="button"
+              aria-label="Edit task"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Pencil size={18} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteTask(props.task.id);
+              }}
+              className="cursor-pointer text-text-secondary hover:text-destructive hover:bg-destructive/10 pointer-events-auto"
+              type="button"
+              aria-label="Delete task"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Trash2 size={18} />
+            </Button>
           </div>
         </div>
 
-        {!isEditing && props.task.description && (
+        {props.task.description && (
           <p className="text-xs text-text-secondary line-clamp-2">
             {props.task.description}
           </p>
         )}
 
-        {!isEditing && (
-          <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50">
-            <Badge variant={priorityVariant}>
-              <Flag size={12} />
-              {props.task.priority.charAt(0).toUpperCase() +
-                props.task.priority.slice(1)}
-            </Badge>
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50">
+          <Badge variant={priorityVariant}>
+            <Flag size={12} />
+            {props.task.priority.charAt(0).toUpperCase() +
+              props.task.priority.slice(1)}
+          </Badge>
 
-            {props.task.dueDate && (
-              <div className="flex items-center gap-1 text-xs text-text-secondary">
-                <Calendar size={12} />
-                {new Date(props.task.dueDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
-              </div>
-            )}
-          </div>
-        )}
+          {props.task.dueDate && (
+            <div className="flex items-center gap-1 text-xs text-text-secondary">
+              <Calendar size={12} />
+              {new Date(props.task.dueDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 
-  const showElectric = isHovered || isEditing;
+  const showElectric = isHovered;
 
   return (
-    <div
-      ref={sortable.setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(sortable.transform),
-        transition: sortable.transition,
-        zIndex: sortable.isDragging ? 9999 : 0,
-        position: sortable.isDragging ? "relative" : "static",
-        opacity: sortable.isDragging ? 1 : undefined,
-      }}
-      {...sortable.attributes}
-      {...sortable.listeners}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-        style={{ opacity: sortable.isDragging ? 1 : 1 }}
+    <>
+      <div
+        ref={sortable.setNodeRef}
+        style={{
+          transform: CSS.Transform.toString(sortable.transform),
+          transition: sortable.transition,
+          zIndex: sortable.isDragging ? 9999 : 0,
+          position: sortable.isDragging ? "relative" : "static",
+          opacity: sortable.isDragging ? 1 : undefined,
+        }}
+        {...sortable.attributes}
+        {...sortable.listeners}
+        onClick={(e) => e.stopPropagation()}
       >
-        {showElectric ? (
-          <ElectricBorder
-            color={electricBorderColor}
-            speed={0.5}
-            chaos={0.05}
-            borderRadius={8}
-          >
-            {cardContent}
-          </ElectricBorder>
-        ) : (
-          <div className="rounded-lg border border-border/60">
-            {cardContent}
-          </div>
-        )}
-      </motion.div>
-    </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          style={{ opacity: sortable.isDragging ? 1 : 1 }}
+        >
+          {showElectric ? (
+            <ElectricBorder
+              color={electricBorderColor}
+              speed={0.5}
+              chaos={0.05}
+              borderRadius={8}
+            >
+              {cardContent}
+            </ElectricBorder>
+          ) : (
+            <div className="rounded-lg border border-border/60">
+              {cardContent}
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      <TaskFormModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEditSubmit}
+        task={props.task}
+        title="Edit Task"
+        submitLabel="Save Changes"
+      />
+    </>
   );
 }
