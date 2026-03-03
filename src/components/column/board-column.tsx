@@ -51,20 +51,20 @@ export function BoardColumn(props: BoardColumnProps) {
           </h3>
           <button
             onClick={handleDeleteColumn}
-            className="p-1 rounded opacity-0 group-hover:opacity-100 text-text-secondary hover:text-destructive hover:bg-destructive/10 transition-all"
+            className="cursor-pointer p-1 rounded opacity-0 group-hover:opacity-100 text-text-secondary hover:text-destructive hover:bg-destructive/10 transition-all"
             type="button"
           >
             <Trash2 size={16} />
           </button>
         </div>
         <p className="text-xs text-secondary font-medium">
-          {props.tasks.length} {props.tasks.length === 1 ? "task" : "tasks"}
+          {props.tasks.length} {props.tasks.length === 1 ? "Task" : "Tasks"}
         </p>
       </div>
 
       <div
         ref={setNodeRef}
-        className="flex-1 p-4 overflow-y-auto space-y-3 min-h-96"
+        className="flex-1 p-4 overflow-y-auto space-y-3 max-h-96"
       >
         <SortableContext
           items={props.tasks.map((t) => t.id)}
@@ -89,7 +89,8 @@ export function BoardColumn(props: BoardColumnProps) {
         <Button
           variant="ghost"
           onClick={() => setShowForm(true)}
-          className="w-full gap-2 text-primary hover:bg-primary/10"
+          className="w-full gap-2 cursor-pointer text-primary hover:bg-primary/10"
+          type="button"
         >
           <Plus size={18} />
           Add Task
