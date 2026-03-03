@@ -8,6 +8,7 @@ type BoardStore = {
   tasks: Task[];
 
   addBoard: (name: string) => void;
+  updateBoard: (id: string, name: string) => void;
   deleteBoard: (id: string) => void;
 
   addColumn: (boardId: string, title: string) => void;
@@ -39,6 +40,12 @@ export const useBoardStore = create<BoardStore>()(
           createdAt: new Date().toISOString(),
         };
         set((state) => ({ boards: [...state.boards, board] }));
+      },
+
+      updateBoard: (id, name) => {
+        set((state) => ({
+          boards: state.boards.map((b) => (b.id === id ? { ...b, name } : b)),
+        }));
       },
 
       deleteBoard: (id) => {

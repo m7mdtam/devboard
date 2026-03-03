@@ -3,10 +3,20 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import type { Task } from "@/types";
 
 const taskFormSchema = z.object({
@@ -73,104 +83,123 @@ export function TaskFormModal(props: TaskFormModalProps) {
         className="relative w-full max-w-md p-6 rounded-2xl bg-surface border border-border shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant="ghost"
+          size="icon-sm"
           onClick={props.onClose}
-          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-border transition-colors"
+          className="absolute top-4 right-4 text-text-secondary hover:text-text"
           type="button"
         >
-          <X size={20} className="text-text-secondary" />
-        </button>
+          <X size={18} />
+        </Button>
 
         <h2 className="text-xl font-bold text-text mb-4">{props.title}</h2>
 
-        <form
-          onSubmit={form.handleSubmit(handleFormSubmit)}
-          className="space-y-4"
-        >
-          <div>
-            <Label
-              htmlFor="title"
-              className="block text-sm font-medium text-text mb-2"
-            >
-              Task Title
-            </Label>
-            <Input
-              id="title"
-              type="text"
-              placeholder="What needs to be done?"
-              {...form.register("title")}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleFormSubmit)}
+            className="space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Task Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="What needs to be done?"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {form.formState.errors.title && (
-              <p className="text-destructive text-sm mt-1">
-                {form.formState.errors.title.message}
-              </p>
-            )}
-          </div>
 
-          <div>
-            <Label
-              htmlFor="description"
-              className="block text-sm font-medium text-text mb-2"
-            >
-              Description (Optional)
-            </Label>
-            <Textarea
-              id="description"
-              placeholder="Add more details..."
-              {...form.register("description")}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Add more details..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <Label
-              htmlFor="priority"
-              className="block text-sm font-medium text-text mb-2"
-            >
-              Priority
-            </Label>
-            <div className="grid grid-cols-3 gap-2">
-              {(["low", "medium", "high"] as const).map((priority) => (
-                <label
-                  key={priority}
-                  className="flex items-center gap-2 p-2 rounded-lg border border-border hover:border-primary cursor-pointer transition-all"
-                >
-                  <input
-                    type="radio"
-                    value={priority}
-                    {...form.register("priority")}
-                    className="w-4 h-4 accent-primary"
-                  />
-                  <span className="text-sm font-medium text-text capitalize">
-                    {priority}
-                  </span>
-                </label>
-              ))}
+            <FormField
+              control={form.control}
+              name="priority"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Priority</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="grid grid-cols-3 gap-2"
+                    >
+                      {(["low", "medium", "high"] as const).map((priority) => (
+                        <Label
+                          key={priority}
+                          htmlFor={`priority-${priority}`}
+                          className={cn(
+                            "flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all font-normal",
+                            field.value === priority
+                              ? "border-primary bg-primary/5 text-primary"
+                              : "border-border hover:border-primary text-text",
+                          )}
+                        >
+                          <RadioGroupItem
+                            value={priority}
+                            id={`priority-${priority}`}
+                          />
+                          <span className="text-sm font-medium capitalize">
+                            {priority}
+                          </span>
+                        </Label>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dueDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Due Date (Optional)</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="secondary"
+                onClick={props.onClose}
+                className="flex-1"
+                type="button"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1">
+                {props.submitLabel || "Create Task"}
+              </Button>
             </div>
-          </div>
-
-          <div>
-            <Label
-              htmlFor="dueDate"
-              className="block text-sm font-medium text-text mb-2"
-            >
-              Due Date (Optional)
-            </Label>
-            <Input id="dueDate" type="date" {...form.register("dueDate")} />
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <Button
-              variant="secondary"
-              onClick={props.onClose}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1">
-              {props.submitLabel || "Create Task"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </motion.div>
     </motion.div>
   );
