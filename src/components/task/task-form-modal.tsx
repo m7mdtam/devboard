@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import type { Task } from "@/types";
 
 const taskFormSchema = z.object({
@@ -41,6 +49,17 @@ interface TaskFormModalProps {
 }
 
 export function TaskFormModal(props: TaskFormModalProps) {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const form = useForm<TaskFormInput>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: props.task
@@ -66,7 +85,133 @@ export function TaskFormModal(props: TaskFormModalProps) {
 
   if (!props.isOpen) return null;
 
-  return (
+  const formContent = (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleFormSubmit)}
+        className="space-y-4"
+      >
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Task Title</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="What needs to be done?"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description (Optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Add more details..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="priority"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Priority</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="grid grid-cols-3 gap-2"
+                >
+                  {(["low", "medium", "high"] as const).map((priority) => (
+                    <Label
+                      key={priority}
+                      htmlFor={`priority-${priority}`}
+                      className={cn(
+                        "flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all font-normal",
+                        field.value === priority
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-border hover:border-primary text-text",
+                      )}
+                    >
+                      <RadioGroupItem
+                        value={priority}
+                        id={`priority-${priority}`}
+                      />
+                      <span className="text-sm font-medium capitalize">
+                        {priority}
+                      </span>
+                    </Label>
+                  ))}
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="dueDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Due Date (Optional)</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            onClick={props.onClose}
+            className="flex-1"
+            type="button"
+          >
+            Cancel
+          </Button>
+          <Button type="submit" className="flex-1">
+            {props.submitLabel || "Create Task"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+
+  // Mobile Drawer
+  const mobileDrawer = (
+    <Drawer open={props.isOpen} onOpenChange={props.onClose}>
+      <DrawerContent className="bg-surface border-t border-border">
+        <DrawerHeader className="flex items-center justify-between px-4 pt-4 pb-2">
+          <DrawerTitle className="text-xl font-bold text-text">
+            {props.title}
+          </DrawerTitle>
+          <DrawerClose className="opacity-0 pointer-events-none" />
+        </DrawerHeader>
+        <div className="px-4 pb-6 max-h-[80vh] overflow-y-auto">
+          {formContent}
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+
+  // Desktop Dialog
+  const desktopDialog = (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -95,112 +240,18 @@ export function TaskFormModal(props: TaskFormModalProps) {
 
         <h2 className="text-xl font-bold text-text mb-4">{props.title}</h2>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleFormSubmit)}
-            className="space-y-4"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Task Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="What needs to be done?"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Add more details..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      className="grid grid-cols-3 gap-2"
-                    >
-                      {(["low", "medium", "high"] as const).map((priority) => (
-                        <Label
-                          key={priority}
-                          htmlFor={`priority-${priority}`}
-                          className={cn(
-                            "flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all font-normal",
-                            field.value === priority
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border hover:border-primary text-text",
-                          )}
-                        >
-                          <RadioGroupItem
-                            value={priority}
-                            id={`priority-${priority}`}
-                          />
-                          <span className="text-sm font-medium capitalize">
-                            {priority}
-                          </span>
-                        </Label>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dueDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Due Date (Optional)</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={props.onClose}
-                className="flex-1"
-                type="button"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" className="flex-1">
-                {props.submitLabel || "Create Task"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+        {formContent}
       </motion.div>
     </motion.div>
+  );
+
+  return (
+    <>
+      {/* Desktop Dialog */}
+      {isDesktop && desktopDialog}
+
+      {/* Mobile Drawer */}
+      {!isDesktop && mobileDrawer}
+    </>
   );
 }
