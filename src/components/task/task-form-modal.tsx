@@ -62,7 +62,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg/70 backdrop-blur-md p-4"
       onClick={props.onClose}
     >
       <motion.div
@@ -138,7 +138,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
                     type="radio"
                     value={priority}
                     {...form.register("priority")}
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-primary"
                   />
                   <span className="text-sm font-medium text-text capitalize">
                     {priority}
@@ -160,7 +160,7 @@ export function TaskFormModal(props: TaskFormModalProps) {
 
           <div className="flex gap-2 pt-2">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={props.onClose}
               className="flex-1"
             >

@@ -146,7 +146,7 @@ const HomePage = () => {
                 className="group relative p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl md:rounded-2xl border border-border bg-surface hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
                 onClick={() => handleBoardClick(board.id)}
               >
-                <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-3 sm:mb-4">
@@ -171,7 +171,7 @@ const HomePage = () => {
                     {[...Array(3)].map((_, index) => (
                       <div
                         key={index}
-                        className="flex-1 h-0.5 sm:h-1 rounded-full bg-linear-to-r from-primary to-primary/50"
+                        className="flex-1 h-0.5 sm:h-1 rounded-full bg-linear-to-r from-primary to-secondary"
                         style={{ opacity: 1 - index * 0.2 }}
                       />
                     ))}

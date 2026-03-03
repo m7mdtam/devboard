@@ -22,9 +22,9 @@ export function TaskCard(props: TaskCardProps) {
 
   const priorityVariant =
     props.task.priority === "low"
-      ? "ghost"
+      ? "secondary"
       : props.task.priority === "medium"
-        ? "secondary"
+        ? "outline"
         : "destructive";
 
   return (

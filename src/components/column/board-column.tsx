@@ -57,7 +57,7 @@ export function BoardColumn(props: BoardColumnProps) {
             <Trash2 size={16} />
           </button>
         </div>
-        <p className="text-xs text-text-secondary">
+        <p className="text-xs text-secondary font-medium">
           {props.tasks.length} {props.tasks.length === 1 ? "task" : "tasks"}
         </p>
       </div>
