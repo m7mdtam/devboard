@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useTheme } from "@/hooks/use-theme";
-import Aurora from "@/components/Aurora";
+import Particles from "@/components/Particles";
 import { useEffect, useState } from "react";
 
 declare module "@tanstack/react-router" {
@@ -22,23 +22,29 @@ function RootComponent() {
     setResolvedTheme(isDark ? "dark" : "light");
   }, [theme]);
 
-  // Color stops for Aurora based on theme - uses primary, secondary, white, and black
-  const auroraColors = {
-    light: ["#ffffff", "#d92d3f", "#7b8fc9"], // White -> Primary Red -> Secondary Blue
-    dark: ["#000000", "#ff8888", "#8fa8ff"], // Black -> Primary Red (lighter) -> Secondary Blue (lighter)
+  // Particle colors based on theme - black for light, white for dark, with accent colors
+  const particleColors = {
+    light: ["#000000", "#d92d3f", "#7b8fc9"],
+    dark: ["#ffffff", "#ff8888", "#8fa8ff"],
   };
 
-  const currentColors = auroraColors[resolvedTheme];
+  const currentColors = particleColors[resolvedTheme];
 
   return (
     <main className="min-h-dvh relative overflow-hidden bg-bg/90">
-      {/* Aurora background */}
+      {/* Particles background */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <Aurora
-          colorStops={currentColors}
-          amplitude={0.8}
-          blend={0.6}
-          speed={1.0}
+        <Particles
+          particleCount={500}
+          particleSpread={25}
+          speed={0.03}
+          particleColors={currentColors}
+          alphaParticles={true}
+          particleBaseSize={250}
+          sizeRandomness={2.5}
+          cameraDistance={15}
+          moveParticlesOnHover={true}
+          particleHoverFactor={1.5}
         />
       </div>
 
