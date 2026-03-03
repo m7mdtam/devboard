@@ -42,7 +42,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-bg px-3 py-6 sm:px-4 sm:py-8 md:py-12">
+    <div className="min-h-dvh px-3 py-6 sm:px-4 sm:py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

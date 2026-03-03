@@ -32,7 +32,7 @@ const BoardPage = () => {
 
   if (!board) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-background">
+      <div className="min-h-dvh flex items-center justify-center">
         <div className="text-center px-4">
           <h1 className="text-2xl font-bold text-text mb-2">Board not found</h1>
           <Button onClick={() => navigate({ to: "/" })}>Go back home</Button>
@@ -95,7 +95,7 @@ const BoardPage = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-background pt-20 pb-16 px-4">
+    <div className="min-h-dvh pt-20 pb-16 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
