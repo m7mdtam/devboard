@@ -23,7 +23,7 @@ export function ThemeProvider(props: ThemeProviderProps) {
     () =>
       (localStorage.getItem(props.storageKey || "devboard-theme") as Theme) ||
       props.defaultTheme ||
-      "system",
+      "system"
   );
 
   useEffect(() => {
@@ -47,16 +47,13 @@ export function ThemeProvider(props: ThemeProviderProps) {
   };
 
   return (
-    <ThemeProviderContext.Provider value={value}>
-      {props.children}
-    </ThemeProviderContext.Provider>
+    <ThemeProviderContext.Provider value={value}>{props.children}</ThemeProviderContext.Provider>
   );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
   const context = useContext(ThemeProviderContext);
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider");
+  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
   return context;
 }

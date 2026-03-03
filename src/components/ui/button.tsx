@@ -14,8 +14,7 @@ const buttonVariants = cva(
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20",
         outline:
           "border border-border bg-background text-text shadow-xs hover:bg-border hover:text-text",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary-hover",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary-hover",
         ghost: "hover:bg-border hover:text-text",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -34,27 +33,17 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
-interface ButtonProps
-  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+interface ButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   prefixIcon?: React.ReactNode;
   suffixIcon?: React.ReactNode;
 }
 
 function Button(props: ButtonProps) {
-  const {
-    className,
-    variant,
-    size,
-    asChild,
-    prefixIcon,
-    suffixIcon,
-    children,
-    ...rest
-  } = props;
+  const { className, variant, size, asChild, prefixIcon, suffixIcon, children, ...rest } = props;
   const Comp = asChild ? Slot.Root : "button";
 
   return (
@@ -65,9 +54,15 @@ function Button(props: ButtonProps) {
       className={cn(buttonVariants({ variant, size, className }))}
       {...rest}
     >
-      {prefixIcon && <span>{prefixIcon}</span>}
-      {children}
-      {suffixIcon && <span>{suffixIcon}</span>}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {prefixIcon && <span>{prefixIcon}</span>}
+          {children}
+          {suffixIcon && <span>{suffixIcon}</span>}
+        </>
+      )}
     </Comp>
   );
 }

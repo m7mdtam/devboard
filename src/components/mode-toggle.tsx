@@ -1,15 +1,15 @@
-import { Monitor, Moon, Sun } from 'lucide-react'
-import { useTheme } from '@/components/theme-provider'
-import { Button } from '@/components/ui/button'
+import { Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
+import { Button } from "@/components/ui/button";
 
-const modes = ['light', 'dark', 'system'] as const
+const modes = ["light", "dark", "system"] as const;
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
   function cycle() {
-    const next = modes[(modes.indexOf(theme) + 1) % modes.length]
-    setTheme(next)
+    const next = modes[(modes.indexOf(theme) + 1) % modes.length];
+    setTheme(next);
   }
 
   return (
@@ -18,8 +18,8 @@ export function ModeToggle() {
       <Moon className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
       <Monitor className="absolute scale-0 transition-all" />
       <span className="sr-only">
-        {theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'}
+        {theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System"}
       </span>
     </Button>
-  )
+  );
 }

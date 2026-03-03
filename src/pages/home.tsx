@@ -1,44 +1,19 @@
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Plus } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoardStore } from "@/store/use-board-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { BoardCard } from "@/components/board/board-card";
+import { BoardForm } from "@/components/pages/home/board-form";
+import { BoardCard } from "@/components/pages/home/board-card";
 import { PageSection } from "@/components/shared/page-section";
-
-const createBoardSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Board name is required")
-    .min(3, "Must be at least 3 characters"),
-});
-
-type CreateBoardInput = z.infer<typeof createBoardSchema>;
+import type { BoardFormInput } from "@/types";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const boards = useBoardStore((state) => state.boards);
   const addBoard = useBoardStore((state) => state.addBoard);
-  const form = useForm<CreateBoardInput>({
-    resolver: zodResolver(createBoardSchema),
-    defaultValues: { name: "" },
-  });
 
-  const handleSubmit = (data: CreateBoardInput) => {
+  const handleCreateBoard = (data: BoardFormInput) => {
     addBoard(data.name);
-    form.reset();
   };
 
   return (
@@ -57,48 +32,13 @@ const HomePage = () => {
           </p>
         </motion.div>
 
-        {/* Create Board */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <PageSection>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSubmit)}
-                className="flex flex-col gap-3 sm:gap-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs sm:text-sm font-medium text-text">
-                        Create New Board
-                      </FormLabel>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Enter board name..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <Button
-                          type="submit"
-                          className="w-full sm:w-auto gap-2 cursor-pointer"
-                        >
-                          <Plus size={18} />
-                          <span className="hidden sm:inline">Create</span>
-                        </Button>
-                      </div>
-                      <FormMessage className="text-xs sm:text-sm" />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
+            <BoardForm onSubmit={handleCreateBoard} />
           </PageSection>
         </motion.div>
 

@@ -16,8 +16,7 @@ function RootComponent() {
   useEffect(() => {
     const isDark =
       theme === "dark" ||
-      (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+      (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedTheme(isDark ? "dark" : "light");
   }, [theme]);
@@ -59,9 +58,7 @@ function RootComponent() {
 export const Route = createRootRoute({
   component: RootComponent,
   beforeLoad: ({ matches }) => {
-    const routeWithTitle = [...matches]
-      .reverse()
-      .find((m) => m.staticData?.title);
+    const routeWithTitle = [...matches].reverse().find((m) => m.staticData?.title);
     document.title = routeWithTitle?.staticData?.title
       ? `${routeWithTitle.staticData.title} | DevBoard`
       : "DevBoard";

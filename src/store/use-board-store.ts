@@ -49,8 +49,8 @@ export const useBoardStore = create<BoardStore>()(
       },
 
       deleteBoard: (id) => {
-        const columnIds = get().columns
-          .filter((c) => c.boardId === id)
+        const columnIds = get()
+          .columns.filter((c) => c.boardId === id)
           .map((c) => c.id);
         set((state) => ({
           boards: state.boards.filter((b) => b.id !== id),
@@ -114,19 +114,13 @@ export const useBoardStore = create<BoardStore>()(
 
       reorderTasks: (columnId, tasks) => {
         set((state) => ({
-          tasks: [
-            ...state.tasks.filter((t) => t.columnId !== columnId),
-            ...tasks,
-          ],
+          tasks: [...state.tasks.filter((t) => t.columnId !== columnId), ...tasks],
         }));
       },
 
       reorderColumns: (boardId, columns) => {
         set((state) => ({
-          columns: [
-            ...state.columns.filter((c) => c.boardId !== boardId),
-            ...columns,
-          ],
+          columns: [...state.columns.filter((c) => c.boardId !== boardId), ...columns],
         }));
       },
     }),
