@@ -99,7 +99,7 @@ const BoardPage = () => {
 
   return (
     <div className="min-h-dvh">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 space-y-4 sm:space-y-6">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 space-y-2 sm:space-y-4 md:space-y-6 pt-4 sm:pt-6">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
