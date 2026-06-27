@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+# devboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Kanban board for planning work as boards, columns, and draggable task cards. It runs entirely in the browser — no backend, no sign-up — and your boards persist between visits, so it loads instantly and keeps working offline.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Create multiple **boards**, each with its own columns
+- Add and rename **columns**, and drag to reorder them
+- Add **task cards** with a description, priority, and due date
+- **Drag and drop** cards within a column or across columns
+- Delete a board or column and its cards are cleaned up with it
+- Light / dark theme, with a mobile layout where task forms open in a drawer
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19 + TypeScript**, built with **Vite**
+- **TanStack Router** — type-safe, file-based routing (`/board/:boardId`)
+- **dnd-kit** — drag-and-drop for cards and columns
+- **Zustand** (persist middleware) — state saved to local storage
+- **React Hook Form + Zod** — validated board and task forms
+- **Tailwind CSS v4 + shadcn/ui** — interface
+- **Motion / GSAP / OGL** — the animated background visuals
 
-## Expanding the ESLint configuration
+## Design notes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **No backend, on purpose.** The whole data model — boards, columns, tasks — lives in one Zustand store persisted to local storage under a single key. That keeps the app deployable as a static site and makes the store the single source of truth; the UI and drag handlers only dispatch actions to it.
+- **Deletes cascade.** Removing a board also removes its columns and their tasks; removing a column removes its tasks, so there are no orphaned records left behind.
+- **Schemas drive the forms and the types.** Board and task shapes are Zod schemas in `src/schemas`, reused for validation and to derive the TypeScript types, so a form and the store can't drift apart.
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Run it locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Vite prints the local URL to open.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+## Where things live
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- `src/routes/` — file-based routes (TanStack Router)
+- `src/store/use-board-store.ts` — the persisted board / column / task state
+- `src/components/pages/board/` — columns, cards, and task forms
+- `src/hooks/use-board-dnd.ts` — drag-and-drop wiring
+- `src/schemas/` — Zod schemas shared by forms and types
